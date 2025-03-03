@@ -13,7 +13,14 @@
    <% if(pantry.length !== 0) { %>
     <ul>Here is everything in your pantry: 
         <% pantry.forEach((pantry)=>{ %>
-            <a href="/users/<%= user._id %>/foods/<%= pantry._id %>"><li><%= pantry.name %></li></a>
+        <li><%= pantry.name %></li>
+        <form action="/users/<%= user._id %>/foods/<%= pantry._id%>?_method=DELETE" method="POST">
+            <button type="submit">Delete</button>
+        </form>
+
+        <form action="/users/<%= user._id %>/foods/<%= pantry._id %>/edit" method="GET">
+          <button type="submit">Edit</button>
+      </form>
         <% }) %> 
        </ul>
   <% } else { %>

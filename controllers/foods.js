@@ -33,11 +33,11 @@ router.get('/new', async (req, res) => {
 
 // DELETE ROUTE.
 
-router.delete('/:pantryId', async (req, res) => {
+router.delete('/:itemId', async (req, res) => {
    try {
     const currentUser = await User.findById(req.session.user._id);
     // Use mongoose.deleteOne() to delete a food using the id supplied from req.params
-    currentUser.pantry.id(req.params.pantryId).deleteOne();
+    currentUser.pantry.id(req.params.itemId).deleteOne();
     // Save changes to the user
     await currentUser.save();
     // Redirect to the index
@@ -49,6 +49,19 @@ router.delete('/:pantryId', async (req, res) => {
 });
 
 // UPDATE ROUTE. 
+
+router.put('/:itemId', async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        const pantryItem = currentUser.pantry.id(req.params.itemId);
+        pantryItem.set(req.body);
+        await currentUser.save();
+        res.redirect(`/users/${currentUser._id}/foods`);
+    } catch (error) {
+        console.log(error);
+        res.redirect('/');
+    }
+});
 
 // CREATE ROUTE. 
 
@@ -70,19 +83,28 @@ router.post('/', async (req, res) => {
 });
 
 // EDIT ROUTE. 
-
-// SHOW ROUTE.
-router.get('/:pantryId', async (req, res) => {
+router.get('/:itemId/edit', async (req, res) => {
     try {
         const currentUser = await User.findById(req.session.user._id);
-        const pantry = currentUser.pantry.id(req.params.pantryId);
-        res.render('foods/show.ejs', {
-            pantry: currentUser.pantry._id,
-        })
+        const pantryItem = currentUser.pantry.id(req.params.itemId);
+        res.render(`foods/edit.ejs`, { pantry: pantryItem });
     } catch (error) {
         console.log(error);
         res.redirect('/');
     }
-})
+});
+// SHOW ROUTE.  Commented out based on the instructions a show page is not required for this lab
+// router.get('/:pantryId', async (req, res) => {
+//     try {
+//         const currentUser = await User.findById(req.session.user._id);
+//         const pantry = currentUser.pantry.id(req.params.pantryId);
+//         res.render('foods/show.ejs', {
+//             pantry: currentUser.pantry._id,
+//         })
+//     } catch (error) {
+//         console.log(error);
+//         res.redirect('/');
+//     }
+// });
 
 module.exports = router;
